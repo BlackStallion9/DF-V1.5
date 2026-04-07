@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dream Farm Trust - Exotic Fruit Delivery</title>
+  
+  <!-- React and ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18.2.0/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18.2.0/umd/react-dom.production.min.js"></script>
+  
+  <!-- Babel for JSX -->
+  <script src="https://unpkg.com/@babel/standalone@7.23.5/babel.min.js"></script>
+  
+  <!-- GSAP -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/MotionPathPlugin.min.js"></script>
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      background: #FDF4E3;
+      color: #1C1917;
+      overflow-x: hidden;
+    }
+
+    /* Navigation */
+    .nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 80;
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #10b981 0%, #3b82f6 50%, #f59e0b 100%);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.12);
+    }
+
+    .nav-logo-text {
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.025em;
+      color: #2A1A12;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .nav-links a {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.6);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .nav-links a:hover {
+      color: #000;
+    }
+
+    /* Hero Section */
+    .hero {
+      position: relative;
+      padding-top: 64px;
+    }
+
+    .stage {
+      position: relative;
+      height: calc(100vh - 64px);
+      overflow: hidden;
+    }
+
+    .camera {
+      position: absolute;
+      inset: 0;
+      width: 170vw;
+    }
+
+    /* Scene sections */
+    .scene-island {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 56vw;
+    }
+
+    .scene-ocean {
+      position: absolute;
+      left: 56vw;
+      top: 0;
+      height: 100%;
+      width: 58vw;
+    }
+
+    .scene-farm {
+      position: absolute;
+      left: 114vw;
+      top: 0;
+      height: 100%;
+      width: 56vw;
+    }
+
+    .bg-layer {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .forest-drift {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      opacity: 0.45;
+      mix-blend-mode: multiply;
+    }
+
+    .ocean-drift {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: 40% 50%;
+    }
+
+    .overlay-gradient-island {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(255, 255, 255, 0.75), transparent 60%);
+    }
+
+    .overlay-gradient-ocean {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent, rgba(0, 0, 0, 0.1));
+    }
+
+    .overlay-gradient-farm {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at top right, rgba(255, 255, 255, 0.75), transparent 60%);
+    }
+
+    /* Spawn anchors */
+    .spawn-anchor {
+      position: absolute;
+      width: 64px;
+      height: 64px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.35);
+      backdrop-filter: blur(8px);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.12);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .anchor-island {
+      left: 8%;
+      top: 14%;
+    }
+
+    .anchor-farm {
+      right: 10%;
+      top: 18%;
+    }
+
+    /* Content cards */
+    .content-card {
+      position: absolute;
+      max-width: 448px;
+    }
+
+    .card-island {
+      left: 6%;
+      top: 28%;
+    }
+
+    .card-ocean {
+      left: 10%;
+      top: 45%;
+    }
+
+    .card-farm {
+      left: 12%;
+      top: 38%;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.55);
+      padding: 4px 12px;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+    }
+
+    .content-card h1 {
+      margin-top: 12px;
+      font-size: 36px;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #2A1A12;
+    }
+
+    .content-card h2 {
+      margin-top: 12px;
+      font-size: 30px;
+      font-weight: 600;
+      color: #2A1A12;
+    }
+
+    .content-card p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    /* Tiki hut */
+    .tiki-hut {
+      position: absolute;
+      right: 10%;
+      bottom: 24%;
+      width: 160px;
+      height: 112px;
+      border-radius: 24px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+      background-size: cover;
+      background-position: 50% 50%;
+    }
+
+    /* Fixed overlay */
+    .fixed-overlay {
+      pointer-events: none;
+      position: absolute;
+      inset: 0;
+      z-index: 70;
+    }
+
+    .table-section {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 38vh;
+    }
+
+    .table-bg {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: bottom;
+      opacity: 0.95;
+    }
+
+    .table-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0, 0, 0, 0.25), transparent);
+    }
+
+    .boxes-container {
+      position: absolute;
+      left: 50%;
+      bottom: 10vh;
+      transform: translateX(-50%);
+      z-index: 75;
+      display: flex;
+      gap: 16px;
+    }
+
+    .box {
+      width: 80px;
+      height: 64px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.18);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    /* Scroll cue */
+    .scroll-cue {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 90;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 8px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(0, 0, 0, 0.7);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.14);
+      backdrop-filter: blur(8px);
+    }
+
+    /* Content sections */
+    .section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 48px 16px;
+    }
+
+    .section-checkout {
+      padding-bottom: 96px;
+    }
+
+    .card {
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 18px 60px rgba(0, 0, 0, 0.10);
+      backdrop-filter: blur(8px);
+      padding: 24px;
+    }
+
+    .card h3 {
+      font-size: 20px;
+      font-weight: 600;
+      color: #2A1A12;
+    }
+
+    .card h4 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2A1A12;
+    }
+
+    .card p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.65);
+    }
+
+    /* Checkout grid */
+    .checkout-grid {
+      display: grid;
+      gap: 32px;
+    }
+
+    @media (min-width: 768px) {
+      .checkout-grid {
+        grid-template-columns: 1.1fr 0.9fr;
+      }
+    }
+
+    /* Forms */
+    .form-section {
+      margin-top: 24px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 16px;
+    }
+
+    .form-section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2A1A12;
+    }
+
+    .form-grid {
+      margin-top: 12px;
+      display: grid;
+      gap: 12px;
+    }
+
+    @media (min-width: 640px) {
+      .form-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .form-label {
+      display: block;
+      font-size: 12px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .form-input,
+    .form-select {
+      margin-top: 4px;
+      width: 100%;
+      border-radius: 12px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      background: white;
+      padding: 8px 12px;
+      font-size: 14px;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .form-input:focus,
+    .form-select:focus {
+      outline: 2px solid #0ea5e9;
+      outline-offset: 2px;
+    }
+
+    .form-input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .form-input::-webkit-outer-spin-button,
+    .form-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 9999px;
+      padding: 8px 16px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-primary {
+      background: #0ea5e9;
+      color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-primary:hover {
+      background: #0284c7;
+    }
+
+    .btn-success {
+      background: #059669;
+      color: white;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-success:hover {
+      background: #047857;
+    }
+
+    .btn-success:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    /* Order summary */
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+      margin: 8px 0;
+    }
+
+    .summary-row-total {
+      border-top: 1px solid rgba(0, 0, 0, 0.1);
+      padding-top: 8px;
+      font-weight: 600;
+      color: #2A1A12;
+    }
+
+    .summary-row span:last-child {
+      font-weight: 600;
+    }
+
+    /* Utility */
+    .reveal {
+      opacity: 0;
+    }
+
+    .text-success {
+      color: #059669;
+      font-weight: 600;
+      font-size: 14px;
+    }
+
+    .text-error {
+      color: #dc2626;
+      font-size: 14px;
+    }
+
+    .text-info {
+      font-size: 14px;
+      color: rgba(0, 0, 0, 0.7);
+    }
+
+    .text-small {
+      margin-top: 8px;
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.55);
+    }
+
+    .tip-box {
+      margin-top: 16px;
+      border-radius: 16px;
+      background: rgba(255, 255, 255, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      padding: 16px;
+      font-size: 11px;
+      color: rgba(0, 0, 0, 0.6);
+    }
+
+    .form-actions {
+      margin-top: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .col-span-2 {
+      grid-column: span 2;
+    }
+
+    @media (max-width: 640px) {
+      .col-span-2 {
+        grid-column: span 1;
+      }
+    }
+
+    /* Loading screen */
+    #loading {
+      position: fixed;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: white;
+      font-size: 20px;
+      font-weight: 600;
+      z-index: 9999;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .content-card h1 {
+        font-size: 28px;
+      }
+
+      .content-card h2 {
+        font-size: 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <div id="loading">Loading Dream Farm Trust...</div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef, useMemo } = React;
+
+    gsap.registerPlugin(ScrollTrigger, MotionPathPlugin);
+
+    function DreamFarmApp() {
+      const scopeRef = useRef(null);
+      const stageRef = useRef(null);
+      const cameraRef = useRef(null);
+      const heroRef = useRef(null);
+      const islandAnchorRef = useRef(null);
+      const farmAnchorRef = useRef(null);
+      const box1Ref = useRef(null);
+      const box2Ref = useRef(null);
+      const box3Ref = useRef(null);
+
+      const [ready, setReady] = useState(false);
+      const [shipToZip, setShipToZip] = useState("");
+      const [boxCount, setBoxCount] = useState(1);
+      const [weightPerBoxLbs, setWeightPerBoxLbs] = useState(8);
+      const [service, setService] = useState("GROUND");
+      const [shipEst, setShipEst] = useState(null);
+      const [cardName, setCardName] = useState("");
+      const [cardNumber, setCardNumber] = useState("");
+      const [exp, setExp] = useState("");
+      const [cvc, setCvc] = useState("");
+      const [processing, setProcessing] = useState(false);
+      const [paid, setPaid] = useState(false);
+      const [orderId, setOrderId] = useState("");
+
+      const BG = useMemo(() => ({
+        island: "https://images.unsplash.com/photo-1685914547257-7b26e3f2d3ae?auto=format&fit=crop&w=2400&q=80",
+        ocean: "https://images.unsplash.com/photo-1569263900347-06b1f8d45f84?auto=format&fit=crop&w=2400&q=80",
+        forest: "https://images.unsplash.com/photo-1712568392573-6c2e63f2a4ab?auto=format&fit=crop&w=2400&q=80",
+        farm: "https://images.unsplash.com/photo-1672823757008-09e74d9e0a4a?auto=format&fit=crop&w=2400&q=80",
+        tiki: "https://images.unsplash.com/photo-1723817585608-36ba0ceea1f0?auto=format&fit=crop&w=1400&q=80",
+        table: "https://images.unsplash.com/photo-1643631616821-2c9efb9dbb2b?auto=format&fit=crop&w=2000&q=80"
+      }), []);
+
+      const flyers = useMemo(() => [
+        { id: "mango", name: "Mango", img: "https://images.unsplash.com/photo-1744374936847-16d0066d2314?auto=format&fit=crop&w=700&q=80" },
+        { id: "tropical", name: "Tropical Fruit", img: "https://images.unsplash.com/photo-1431794062232-2a99a5431c6c?auto=format&fit=crop&w=700&q=80" },
+        { id: "island", name: "Island Harvest", img: "https://images.unsplash.com/photo-1560806887-1e4cd0b6cbd6?auto=format&fit=crop&w=700&q=80" }
+      ], []);
+
+      function spawnFruit(from) {
+        const stage = stageRef.current;
+        if (!stage) return;
+
+        const startEl = from === "island" ? islandAnchorRef.current : farmAnchorRef.current;
+        const targets = [box1Ref.current, box2Ref.current, box3Ref.current].filter(Boolean);
+        if (!startEl || targets.length === 0) return;
+
+        const pick = flyers[Math.floor(Math.random() * flyers.length)];
+        const target = targets[Math.floor(Math.random() * targets.length)];
+
+        const el = document.createElement("img");
+        el.src = pick.img;
+        el.alt = pick.name;
+        const size = 52 + Math.floor(Math.random() * 28);
+        el.style.cssText = `
+          pointer-events: none;
+          position: absolute;
+          z-index: 60;
+          border-radius: 16px;
+          box-shadow: 0 18px 60px rgba(0,0,0,0.22);
+          border: 1px solid rgba(255,255,255,0.4);
+          width: ${size}px;
+          height: ${size}px;
+          object-fit: cover;
+          opacity: 0;
+        `;
+        stage.appendChild(el);
+
+        const stageRect = stage.getBoundingClientRect();
+        const sRect = startEl.getBoundingClientRect();
+        const tRect = target.getBoundingClientRect();
+
+        const startX = sRect.left + sRect.width / 2 - stageRect.left;
+        const startY = sRect.top + sRect.height / 2 - stageRect.top;
+        const endX = tRect.left + tRect.width / 2 - stageRect.left;
+        const endY = tRect.top + tRect.height / 2 - stageRect.top;
+
+        gsap.set(el, { x: startX, y: startY, scale: 0.95, rotate: Math.random() * 18 - 9, opacity: 0 });
+
+        const midX = (startX + endX) / 2 + (from === "island" ? 160 : -160);
+        const midY = Math.min(startY, endY) - (120 + Math.random() * 160);
+
+        gsap.to(el, { opacity: 1, duration: 0.15, ease: "power1.out" });
+
+        gsap.to(el, {
+          duration: 2.0 + Math.random() * 0.9,
+          ease: "power2.inOut",
+          motionPath: { path: [{ x: startX, y: startY }, { x: midX, y: midY }, { x: endX, y: endY }], curviness: 1.2 },
+          rotate: `+=${Math.random() * 40 - 20}`,
+          scale: 0.78,
+          onComplete: () => {
+            gsap.fromTo(target, { scale: 1 }, { scale: 1.06, duration: 0.12, yoyo: true, repeat: 1, ease: "power2.out" });
+            gsap.to(el, { opacity: 0, duration: 0.22, ease: "power1.out", onComplete: () => el.remove() });
+          }
+        });
+      }
+
+      useEffect(() => {
+        const raf = requestAnimationFrame(() => setReady(true));
+        return () => cancelAnimationFrame(raf);
+      }, []);
+
+      useEffect(() => {
+        if (!ready) return;
+
+        const scope = scopeRef.current;
+        const stage = stageRef.current;
+        const camera = cameraRef.current;
+        const hero = heroRef.current;
+
+        if (!scope || !stage || !camera || !hero) return;
+
+        const ctx = gsap.context(() => {
+          ScrollTrigger.create({ trigger: hero, start: "top top", end: "+=2400", pin: true, scrub: true });
+          gsap.fromTo(camera, { xPercent: 0 }, { xPercent: -58, ease: "none", scrollTrigger: { trigger: hero, start: "top top", end: "+=2400", scrub: true } });
+          gsap.to(".ocean-drift", { backgroundPosition: "120% 50%", duration: 12, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.to(".forest-drift", { backgroundPosition: "50% 58%", duration: 10, repeat: -1, yoyo: true, ease: "sine.inOut" });
+          gsap.utils.toArray(".reveal").forEach((el) => {
+            gsap.fromTo(el, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out", scrollTrigger: { trigger: el, start: "top 85%" } });
+          });
+        }, scope);
+
+        const islandInterval = setInterval(() => spawnFruit("island"), 900);
+        const farmInterval = setInterval(() => spawnFruit("farm"), 1200);
+
+        return () => {
+          clearInterval(islandInterval);
+          clearInterval(farmInterval);
+          ctx.revert();
+        };
+      }, [ready]);
+
+      function estimateUpsDemo({ zip, lbs, service }) {
+        const z = String(zip || "").replace(/\D/g, "").slice(0, 5);
+        if (z.length !== 5) return { ok: false, message: "Enter a valid 5-digit ZIP." };
+
+        const zoneDigit = parseInt(z[0], 10);
+        const zoneFactor = zoneDigit <= 2 ? 1.0 : zoneDigit <= 4 ? 1.15 : zoneDigit <= 6 ? 1.3 : zoneDigit <= 8 ? 1.45 : 1.6;
+        const weight = Math.max(1, Number(lbs) || 1);
+        const weightFactor = 1 + Math.min(0.9, weight / 40);
+        const base = service === "2DAY" ? 18 : service === "NEXTDAY" ? 38 : 12;
+        const rate = Math.round((base * zoneFactor * weightFactor + 2.75) * 100) / 100;
+        const days = service === "NEXTDAY" ? "1 business day" : service === "2DAY" ? "2 business days" : "3–5 business days";
+
+        return { ok: true, carrier: "UPS (Estimate)", service, days, rate, zip: z, weight };
+      }
+
+      function calcShipping() {
+        const totalWeight = Math.max(1, Number(boxCount) || 1) * Math.max(1, Number(weightPerBoxLbs) || 1);
+        const res = estimateUpsDemo({ zip: shipToZip, lbs: totalWeight, service });
+        setShipEst(res);
+      }
+
+      function formatMoney(n) {
+        return `$${Number(n || 0).toFixed(2)}`;
+      }
+
+      async function handlePay(e) {
+        e.preventDefault();
+        setPaid(false);
+
+        const n = cardNumber.replace(/\s/g, "");
+        if (!shipEst?.ok) {
+          setShipEst({ ok: false, message: "Please calculate shipping before paying." });
+          return;
+        }
+        if (!cardName || n.length < 12 || !exp || !cvc) {
+          alert("Please fill in name, card number, exp, and CVC (demo).");
+          return;
+        }
+
+        setProcessing(true);
+        await new Promise((r) => setTimeout(r, 1200));
+        setProcessing(false);
+        setPaid(true);
+        setOrderId("DFT-" + Math.floor(Math.random() * 900000 + 100000));
+      }
+
+      const subtotal = 89 * Math.max(1, Number(boxCount) || 1);
+      const shipCost = shipEst?.ok ? shipEst.rate : 0;
+      const tax = Math.round((subtotal * 0.08) * 100) / 100;
+      const total = Math.round((subtotal + shipCost + tax) * 100) / 100;
+
+      return (
+        <div ref={scopeRef}>
+          {/* Navigation */}
+          <div className="nav">
+            <div className="nav-container">
+              <div className="nav-logo">
+                <div className="nav-logo-icon" />
+                <span className="nav-logo-text">Dream Farm Trust</span>
+              </div>
+              <div className="nav-links">
+                <a href="#below">Scroll story</a>
+                <a href="#checkout">Checkout</a>
+              </div>
+            </div>
+          </div>
+
+          {/* Hero Section */}
+          <section ref={heroRef} className="hero">
+            <div ref={stageRef} className="stage">
+              <div ref={cameraRef} className="camera">
+                {/* Island */}
+                <div className="scene-island">
+                  <div className="bg-layer" style={{ backgroundImage: `url(${BG.island})` }} />
+                  <div className="forest-drift" style={{ backgroundImage: `url(${BG.forest})` }} />
+                  <div className="overlay-gradient-island" />
+
+                  <div ref={islandAnchorRef} className="spawn-anchor anchor-island">ISLAND</div>
+
+                  <div className="content-card card-island reveal">
+                    <div className="badge">🌴 Tropical islands → fruit flight begins</div>
+                    <h1>Fruit flies out of the forest…</h1>
+                    <p>Follow it across the ocean into your box.</p>
+                  </div>
+                </div>
+
+                {/* Ocean */}
+                <div className="scene-ocean">
+                  <div className="ocean-drift" style={{ backgroundImage: `url(${BG.ocean})` }} />
+                  <div className="overlay-gradient-ocean" />
+
+                  <div className="content-card card-ocean reveal">
+                    <div className="badge">🌊 Rolling waves</div>
+                    <h2>…across the sea…</h2>
+                    <p>Keep scrolling — the camera follows.</p>
+                  </div>
+
+                  <div className="tiki-hut" style={{ backgroundImage: `url(${BG.tiki})` }} />
+                </div>
+
+                {/* Farm */}
+                <div className="scene-farm">
+                  <div className="bg-layer" style={{ backgroundImage: `url(${BG.farm})` }} />
+                  <div className="overlay-gradient-farm" />
+
+                  <div ref={farmAnchorRef} className="spawn-anchor anchor-farm">FARM</div>
+
+                  <div className="content-card card-farm reveal">
+                    <div className="badge">🌿 Fruit from orchards</div>
+                    <h2>…into the farm… into your box.</h2>
+                    <p>Island canopy + farm trees → same destination.</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Fixed Overlay */}
+              <div className="fixed-overlay">
+                <div className="table-section">
+                  <div className="table-bg" style={{ backgroundImage: `url(${BG.table})` }} />
+                  <div className="table-gradient" />
+                </div>
+
+                <div className="boxes-container">
+                  <div ref={box1Ref} className="box">BOX</div>
+                  <div ref={box2Ref} className="box">BOX</div>
+                  <div ref={box3Ref} className="box">BOX</div>
+                </div>
+              </div>
+
+              <div className="scroll-cue">↓ keep scrolling — follow the fruit flight</div>
+            </div>
+          </section>
+
+          {/* Below Fold */}
+          <section className="section">
+            <div className="card reveal">
+              <h3>Scroll story reward</h3>
+              <p>Next is checkout with shipping estimation + payment (demo).</p>
+            </div>
+          </section>
+
+          {/* Checkout */}
+          <section id="checkout" className="section section-checkout">
+            <div className="checkout-grid">
+              {/* Left Column */}
+              <div className="card reveal">
+                <h3>Checkout</h3>
+                <p>UPS shipping estimate (demo) + simulated payment processing.</p>
+
+                {/* Shipping */}
+                <div className="form-section">
+                  <div className="form-section-title">UPS Shipping Estimator</div>
+                  
+                  <div className="form-grid">
+                    <label className="form-label">
+                      Ship-to ZIP
+                      <input className="form-input" value={shipToZip} onChange={(e) => setShipToZip(e.target.value)} placeholder="e.g. 80202" />
+                    </label>
+
+                    <label className="form-label">
+                      UPS Service
+                      <select className="form-select" value={service} onChange={(e) => setService(e.target.value)}>
+                        <option value="GROUND">UPS Ground</option>
+                        <option value="2DAY">UPS 2nd Day Air</option>
+                        <option value="NEXTDAY">UPS Next Day Air</option>
+                      </select>
+                    </label>
+
+                    <label className="form-label">
+                      Boxes
+                      <input className="form-input" type="number" min="1" value={boxCount} onChange={(e) => setBoxCount(e.target.value)} />
+                    </label>
+
+                    <label className="form-label">
+                      Weight per box (lbs)
+                      <input className="form-input" type="number" min="1" value={weightPerBoxLbs} onChange={(e) => setWeightPerBoxLbs(e.target.value)} />
+                    </label>
+                  </div>
+
+                  <div className="form-actions">
+                    <button className="btn btn-primary" onClick={calcShipping}>Calculate shipping</button>
+                    
+                    {shipEst?.ok && (
+                      <div className="text-info">
+                        <strong>{shipEst.carrier}</strong> · <strong>{shipEst.service}</strong> · {shipEst.days} · <strong>{formatMoney(shipEst.rate)}</strong>
+                      </div>
+                    )}
+
+                    {shipEst && !shipEst.ok && (
+                      <div className="text-error">{shipEst.message}</div>
+                    )}
+                  </div>
+
+                  <div className="text-small">Demo estimate uses ZIP zone approximation + weight. Replace with real UPS API later.</div>
+                </div>
+
+                {/* Payment */}
+                <form onSubmit={handlePay} className="form-section">
+                  <div className="form-section-title">Payment</div>
+
+                  <div className="form-grid">
+                    <label className="form-label col-span-2">
+                      Name on card
+                      <input className="form-input" value={cardName} onChange={(e) => setCardName(e.target.value)} placeholder="Full name" />
+                    </label>
+
+                    <label className="form-label col-span-2">
+                      Card number
+                      <input className="form-input" value={cardNumber} onChange={(e) => setCardNumber(e.target.value)} placeholder="1234 5678 9012 3456" />
+                    </label>
+
+                    <label className="form-label">
+                      Exp (MM/YY)
+                      <input className="form-input" value={exp} onChange={(e) => setExp(e.target.value)} placeholder="08/29" />
+                    </label>
+
+                    <label className="form-label">
+                      CVC
+                      <input className="form-input" value={cvc} onChange={(e) => setCvc(e.target.value)} placeholder="123" />
+                    </label>
+                  </div>
+
+                  <div className="form-actions">
+                    <button type="submit" className="btn btn-success" disabled={processing}>
+                      {processing ? "Processing…" : "Pay now"}
+                    </button>
+
+                    {paid && (
+                      <div className="text-success">Paid ✓ Order {orderId}</div>
+                    )}
+                  </div>
+
+                  <div className="text-small">Payment is simulated for preview. Replace with Stripe later.</div>
+                </form>
+              </div>
+
+              {/* Right Column - Order Summary */}
+              <div className="card reveal">
+                <h4>Order Summary</h4>
+
+                <div style={{ marginTop: '12px' }}>
+                  <div className="summary-row">
+                    <span>Boxes</span>
+                    <span>{Math.max(1, Number(boxCount) || 1)}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>Subtotal</span>
+                    <span>{formatMoney(subtotal)}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>Shipping</span>
+                    <span>{shipEst?.ok ? formatMoney(shipCost) : "—"}</span>
+                  </div>
+                  <div className="summary-row">
+                    <span>Tax (est.)</span>
+                    <span>{formatMoney(tax)}</span>
+                  </div>
+                  <div className="summary-row summary-row-total">
+                    <span>Total</span>
+                    <span>{formatMoney(total)}</span>
+                  </div>
+                </div>
+
+                <div className="tip-box">
+                  Tip: Enter a ZIP, choose UPS service, click "Calculate shipping", then Pay.
+                </div>
+              </div>
+            </div>
+          </section>
+        </div>
+      );
+    }
+
+    // Hide loading and render
+    window.addEventListener('load', () => {
+      document.getElementById('loading').style.display = 'none';
+      const root = ReactDOM.createRoot(document.getElementById('root'));
+      root.render(<DreamFarmApp />);
+    });
+  </script>
+</body>
+</html>
